@@ -49,24 +49,40 @@ const int64 Constants[80]=
     0x5fcb6fab3ad6faec, 0x6c44198c4a475817
 };
 
-string getHexFrom4bit(string bin)  // Convert 4digit binary string to hex string format.
+string getHexFrom4bit(string bin)
 {
-    if (bin == "0000") return "0";
-    if (bin == "0001") return "1";
-    if (bin == "0010") return "2";
-    if (bin == "0011") return "3";
-    if (bin == "0100") return "4";
-    if (bin == "0101") return "5";
-    if (bin == "0110") return "6";
-    if (bin == "0111") return "7";
-    if (bin == "1000") return "8";
-    if (bin == "1001") return "9";
-    if (bin == "1010") return "a";
-    if (bin == "1011") return "b";
-    if (bin == "1100") return "c";
-    if (bin == "1101") return "d";
-    if (bin == "1110") return "e";
-    if (bin == "1111") return "f";
+    if (bin == "0000")
+        return "0";
+    if (bin == "0001")
+        return "1";
+    if (bin == "0010")
+        return "2";
+    if (bin == "0011")
+        return "3";
+    if (bin == "0100")
+        return "4";
+    if (bin == "0101")
+        return "5";
+    if (bin == "0110")
+        return "6";
+    if (bin == "0111")
+        return "7";
+    if (bin == "1000")
+        return "8";
+    if (bin == "1001")
+        return "9";
+    if (bin == "1010")
+        return "a";
+    if (bin == "1011")
+        return "b";
+    if (bin == "1100")
+        return "c";
+    if (bin == "1101")
+        return "d";
+    if (bin == "1110")
+        return "e";
+    if (bin == "1111")
+        return "f";
     return NULL;
 }
 
@@ -74,6 +90,7 @@ string getHexFrom4bit(string bin)  // Convert 4digit binary string to hex string
 string getHexFromDecimal(int64 deci)
 {
     string bin = bitset<64>(deci).to_string();
+
     string hex_str= "";
     string temp;
 
@@ -100,7 +117,7 @@ int64 shift_right(int64 x, int n)
 {
     return (x >> n);
 }
-//ekhan theke 80 ta word pelam
+
 void message_schedeuler(string single_block)
 {
     int nChunk = 0;
@@ -149,9 +166,32 @@ void round(int64 a, int64 b, int64 c,int64& d, int64 e, int64 f,int64 g, int64& 
     d = d + T1;
     h = T1 + T2;
 }
+string decimal_to_binary(int64 decimal)
+{
+    string str_binary;
+    char bin[8];
+    int i,j,s;
+    for(i=7; i>=0; i--)
+    {
+        j=decimal % 2;
+        if(j==0)
+            bin[i]='0';
 
+
+        else if(j==1)
+            bin[i]='1';
+
+        decimal = decimal / 2;
+
+    }
+
+    for(i=0; i<=7; i++)
+        str_binary.push_back(bin[i]);
+    return str_binary;
+}
 string SHA(string msg)
 {
+
     int64 A = 0x6a09e667f3bcc908;
     int64 B = 0xbb67ae8584caa73b;
     int64 C = 0x3c6ef372fe94f82b;
@@ -161,31 +201,36 @@ string SHA(string msg)
     int64 G = 0x1f83d9abfb41bd6b;
     int64 H = 0x5be0cd19137e2179;
 
-    stringstream fixedstream;
-    //stream for converting main string to binary string
-    for (int i = 0; i < (int)msg.size(); ++i) fixedstream << bitset<8>(msg[i]);
+    int n=msg.size();
+    int decimal[n];
+
 
     string binary_str;
-    binary_str = fixedstream.str();
+    for(int i=0; i<msg.size(); i++)
+    {
+        decimal[i]=int(msg[i]);
 
-    //cout<<"the binary string after padding"<<binary_str<<endl;
+        binary_str.append(decimal_to_binary(decimal[i]));
+    }
+
+    cout<<"the binary string of main string"<<endl<<binary_str<<endl;
 
     int binary_msglen= binary_str.length();
     int pad_len;
 
     int last_block_len = binary_str.length() % 1024;
 
-    if (1024 - last_block_len >= 128) pad_len = 1024 - last_block_len;//just one block
-    else pad_len = 2048 - last_block_len; // We need to add a new block to store the address so 2048.
+    if (1024 - last_block_len >= 128) pad_len = 1024 - last_block_len;
+    else pad_len = 2048 - last_block_len;
 
     binary_str += "1";
-    for(int i = 0; i < pad_len - 129; i++)// 128 num + 1 = 129
+    for(int i = 0; i < pad_len - 129; i++)
         binary_str += "0";
 
-    string lengthbits = std::bitset<128>(binary_msglen).to_string();//lengthbits is the 64 bit representation of original length
+    string lengthbits = std::bitset<128>(binary_msglen).to_string();
 
 
-    binary_str += lengthbits; // Appending length at the end of the padded string.
+    binary_str += lengthbits;
     cout<<"the binary string after padding"<<endl<<binary_str<<endl;
     int nBlock = binary_str.length() / 1024;
     int iBlock = 0;
@@ -194,7 +239,7 @@ string SHA(string msg)
     for (int i = 0; i < binary_str.length(); i += 1024, ++iBlock) Blocks[iBlock] = binary_str.substr(i, 1024);
 
 
-    int64 previous_A, previous_B, previous_C, previous_D, previous_E, previous_F, previous_G, previous_H; // To store the previous hash
+    int64 previous_A, previous_B, previous_C, previous_D, previous_E, previous_F, previous_G, previous_H;
     for (int j = 0; j < nBlock; j++)
     {
         message_schedeuler(Blocks[j]);
@@ -208,7 +253,7 @@ string SHA(string msg)
         previous_H = H;
 
         for (int i = 0; i < 80; i++)
-            //this is for 80 round to find the hash value
+
         {
             int64 T1 = H + Ch(E, F, G) + sum_1(E) + Message[i] + Constants[i];
             int64 T2 = sum_0(A) + maj(A, B, C);
@@ -222,7 +267,7 @@ string SHA(string msg)
             B=A;
             A=T1+T2;
         }
-//lastly we add the first A to the last round's A and same for all B,C...
+
         A += previous_A;
         B += previous_B;
         C += previous_C;
@@ -251,6 +296,9 @@ string SHA(string msg)
 int main()
 {
 
+    /*string main_string;
+    cout<<"enter the input string<<endl;
+    cin>>main_string;*/
 
     std::string file_name = "spl_file_demo.txt";
     std::ifstream file(file_name);
@@ -272,12 +320,12 @@ int main()
 
     main_string.erase(std::remove(main_string.begin(), main_string.end(), ' '), main_string.end());
     std::cout << "String from the file is:\n" << main_string << std::endl;
-    cout<<"size of the main string(binary): "<<main_string.size()*8<<endl;
-    string final_output=SHA(main_string);
+
+    string final_hashvalue=SHA(main_string);
 
 
 
-    cout<<endl<<"the hash value is:"<<endl<<final_output;
+    cout<<endl<<"the hash value is:"<<endl<<final_hashvalue;
 
 
 
