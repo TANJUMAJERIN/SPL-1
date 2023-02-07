@@ -158,7 +158,7 @@ int64 sum_0(int64 a)
     return rotate_right(a, 28) ^ rotate_right(a, 34) ^ rotate_right(a, 39);
 }
 
-void round(int64 a, int64 b, int64 c,int64& d, int64 e, int64 f,int64 g, int64& h, int K)
+void round(int64 a, int64 b, int64 c,int64 d, int64 e, int64 f,int64 g, int64 h, int K)
 {
     int64 T1 = h + Ch(e, f, g) + sum_1(e) + Message[K] + Constants[K];
     int64 T2 = sum_0(a) + maj(a, b, c);
@@ -220,8 +220,10 @@ string SHA(string msg)
 
     int last_block_len = binary_str.length() % 1024;
 
-    if (1024 - last_block_len >= 128) pad_len = 1024 - last_block_len;
-    else pad_len = 2048 - last_block_len;
+    if (1024 - last_block_len >= 128)
+      pad_len = 1024 - last_block_len;
+    else
+        pad_len = 2048 - last_block_len;
 
     binary_str += "1";
     for(int i = 0; i < pad_len - 129; i++)
@@ -319,13 +321,13 @@ int main()
     }
 
     main_string.erase(std::remove(main_string.begin(), main_string.end(), ' '), main_string.end());
-    std::cout << "String from the file is:\n" << main_string << std::endl;
+    std::cout << "\n\nString from the file is:\n" <<" "<< main_string <<endl<< std::endl;
 
     string final_hashvalue=SHA(main_string);
 
 
 
-    cout<<endl<<"the hash value is:"<<endl<<final_hashvalue;
+    cout<<endl<<"the hash value is:"<<endl<<final_hashvalue<<endl;
 
 
 
