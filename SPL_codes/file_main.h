@@ -4,6 +4,7 @@
 #include <cerrno>
 #include <string.h>
 #include <stdbool.h>
+#include <vector>
 #include"Delete_File.h"
 #include"SHA256.h"
 #include"trie.h"
@@ -37,13 +38,13 @@ int check(string s){
         const char *key=hashvalue.c_str();
 
 
-//trie part
+
 
 
         FILE *fp = fopen("hashset.txt", "r");
         if (fp == NULL)
         {
-            printf("Error opening file\n");
+            printf("Error opening hashset file\n");
             return 1;
         }
 
@@ -64,11 +65,11 @@ int check(string s){
 
 
         if (search(root, key ))
-            {cout << "This file is Detected as Malware!" << endl;
+            {cout << "This file is Detected as Malware(hash)!" << endl<<endl;
             track=-1;//}
             file.close();}
 
-        //pe part check
+
         else
         {
             //cout << "This file is not detect as malware by hash value matching , lets recheck by analysing pe header" << endl<<endl;
@@ -78,7 +79,7 @@ int check(string s){
             unsigned long  checksum;
             unsigned short dllcharacteristics;
             unsigned long initializedData;
-            //string s="malware2.exe";
+
 
 
             std::ifstream file(fileName, std::ios::binary);
@@ -103,9 +104,9 @@ int check(string s){
                 printf("DLL characteristics:   0x%X\n", dllcharacteristics);
                 printf("major image version:   0x%X\n", majorImageVersion);*/
                 int noOfSection=ParseSectionHeaders(fileName, file);
-                //file.close();
+
                 fclose(PpeFile);
-                //cout<<"Number of Sections:  "<<noOfSection<<endl<<endl;
+
 
                 char sections[noOfSection][8];
                 for(int i=0; i<noOfSection; i++)
@@ -129,43 +130,43 @@ int check(string s){
                         if (std::strcmp(sections[i], known_section_names[j]) == 0)
                         {
                             found = true;
-                            //cout<<"found"<<found;
+
                             break;
                         }
                     }
                     if (!found)
                     {
                         allPresent = false;
-                        //cout<<allPresent;
+
                         break;
                     }
                 }
 
-//int track=0;
+
 
                 if(initializedData==0)
                 {
-                    cout<<"THIS FILE IS 'MALWARE'";
+                    cout<<"THIS FILE IS 'MALWARE'!!"<<endl<<endl;
                     track=-1;
 
                 }
                 else if(!allPresent)
                 {
-                    cout<<"THIS FILE IS 'MALWARE'";
+                    cout<<"THIS FILE IS 'MALWARE'"<<endl<<endl;
                     track=-1;
 
                 }
 
                 else if(dllcharacteristics==0&&majorImageVersion==0&&checksum==0)
                 {
-                    cout<<"THIS FILE IS 'MALWARE'";
+                    cout<<"THIS FILE IS 'MALWARE'"<<endl<<endl;
                     track=-1;
 
                 }
 
                 else
                 {
-                    cout<<"THIS FILE IS 'NOT MALWARE'"<<endl;
+                    cout<<"THIS FILE IS 'NOT MALWARE'"<<endl<<endl;
                     track=0;
 
                 }
@@ -173,13 +174,15 @@ int check(string s){
 
             else
             {
-                cout<<endl<<"it is not PE file"<<endl;
+                cout<<endl<<"it is not PE file"<<endl<<endl;
                 return 0;
 
             }
-            //cout<<"hey"<<endl;
+
 
             }
+
+file.close();
 
 
             if(track==-1)
@@ -189,21 +192,17 @@ int check(string s){
                 cout<<"Select an option please-"<<endl;
                 cout<<"  1.Delete"<<endl;
                 cout<<"  2.Quarantine"<<endl;
-                cout<<"  3.Nothing"<<endl;
+                cout<<"  3.Exit"<<endl;
                 int i;
                 cin>>i;
                 const char* filePath=fileName;
                 if(i==1)
                 {
-                //const char* fileoo=s.c_str();
-                file.close();
-                //fclose(PpeFile);
+
+
+
                 file_delete(filePath);
-                /*if (std::remove(fileName) != 0) {
-            std::perror("Failed to delete the file");
-            std::cout << "Error code: " << errno << std::endl;
-         } else {
-        std::cout << "File deleted successfully." << std::endl;*/
+
     }
 
 
@@ -213,7 +212,7 @@ int check(string s){
                 }
                 else if(i==2)
                 {
-                    //encoding part
+
                     encodeFile(filePath);
                     int a;
                     cout<<"wanna have (decode) the file again?"<<endl<<"press 1 to decode the file"<<endl;
@@ -233,7 +232,8 @@ int check(string s){
         }
 
 
-
+else
+    cout<<" can't find the file "<<endl;
 
 
 
