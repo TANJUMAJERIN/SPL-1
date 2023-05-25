@@ -10,6 +10,7 @@ using namespace std;
 #define IMAGE_SIZEOF_SECTION_HEADER          40
 
 char SectionName[8][9];
+
 char known_section_names[210][30]={
     ".AAWEBS",".apiset",".arch",".autoload_text",".bindat",".bootdat",".bss",".BSS",
     ".buildid",".CLR_UEF",".code",".cormeta",".complua",".CRT",".cygwin_dll_common",".data",
@@ -36,7 +37,8 @@ char known_section_names[210][30]={
 } ;
 
 
-//image dos header
+
+
 typedef struct IMAGE_DOS_HEADER
 {
     unsigned short   e_magic;
@@ -59,6 +61,7 @@ typedef struct IMAGE_DOS_HEADER
     unsigned short   e_res2[10];
     unsigned long   e_lfanew;
 } IMAGE_DOS_HEADER, * PIMAGE_DOS_HEADER;
+
 
 
 
@@ -97,7 +100,9 @@ typedef struct IMAGE_OPTIONAL_HEADER
 
 } IMAGE_OPTIONAL_HEADER, * PIMAGE_OPTIONAL_HEADER;
 
-//image file header
+
+
+
 typedef struct IMAGE_FILE_HEADER
 {
     unsigned short    Machine;
@@ -137,7 +142,7 @@ typedef struct __IMAGE_SECTION_HEADER
     unsigned long    Characteristics;
 } IMAGE_SECTION_HEADER, * PIMAGE_SECTION_HEADER;
 
-IMAGE_DOS_HEADER     PEFILE_DOS_HEADER;
+IMAGE_DOS_HEADER   PEFILE_DOS_HEADER;
 IMAGE_NT_HEADERS   PEFILE_NT_HEADERS;
 
 
